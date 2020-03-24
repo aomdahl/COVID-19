@@ -5,25 +5,29 @@ Script dependencies include the following R packages:
 * ggplot2
 * sva
 
-`download_data.sh`: download data from GTEX and Gencode for downstream analysis
+`download_data.sh`: download data from GTEX and Gencode for downstream analysis <br/>
 
-Approach I: <br/>
-Scripts to be run in the following order:<br/>
-`tpm_age_sex.R`: controlling for covariates below by regressing them out:<br/>
+Approach I: Perform SVA to learn about the SVs, and test asscoations with AGE and SEX controlling for the SVs <br/>
+
+`extract_protein_coding_lincRNA_genes.sh`: Extract genes that are protein coding or lincRNA <br/>
+`generate_tissue_wise_TPM.R`: Generate a matrix of genes by samples for each tissue <br/>
+`SVA_compute_SV.R`: Infer about surrogate variables (SVs) using SVA <br/>
+`SVA_followedby_LR.R`: Perform association tests controlling for SVs <br/>
+
+
+Pipeline:<br/>
+`bash download_data.sh` <br/>
+`bash extract_protein_coding_lincRNA_genes.sh`<br/>
+`Rscript generate_tissue_wise_TPM.R`<br/>
+`Rscript SVA_compute_SV.R`<br/>
+`Rscript SVA_followedby_LR.R ENSG00000130234.10`<br/>
+`Rscript SVA_followedby_LR.R ENSG00000184012.11`<br/>
+
+
+Approach II: Test asscoations with AGE and SEX controlling for known confounders <br/>
+`Rscript LR_confounders.R`
+
 * DTHHRDY  - Death Circumstances<br/>
 * SMRIN  - RIN number <br/>
 * SMTSISCH - Total Ischemic time <br/>
 * SMEXNCRT - Exonic Rate <br/>
-
-
-Approach II:<br/>
-`extract_protein_coding_lincRNA_genes.sh`: Extract genes that are protein coding or lincRNA<br/>
-
-`generate_tissue_wise_TPM.R`: Generate a matrix of genes by samples for each tissue<br/>
-
-`tpm_age_sex_sva.R`: infer about surrogate variables (SVs) using SVA and regress the SVs out<br/>
-                    When testing for AGE, keep AGE in SVA; when testing for SEX, keep SEX in SVA.<br/>
-                    Pass in the tissue of interest's number (number can be found by:
-                    `cut -f7 GTEx_data/GTEx_Analysis_v8_Annotations_SampleAttributesDS.txt | sort -u | grep -n "tissue_of_interest"` - 1 
-
-`Plot_SV_corrected.R`: plot out the significant associations
